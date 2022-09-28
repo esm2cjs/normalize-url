@@ -72,6 +72,7 @@ function normalizeUrl(urlString, options) {
     removeTrailingSlash: true,
     removeSingleSlash: true,
     removeDirectoryIndex: false,
+    removeExplicitPort: false,
     sortQueryParameters: true,
     ...options
   };
@@ -175,6 +176,9 @@ function normalizeUrl(urlString, options) {
   }
   if (options.removeTrailingSlash) {
     urlObject.pathname = urlObject.pathname.replace(/\/$/, "");
+  }
+  if (options.removeExplicitPort && urlObject.port) {
+    urlObject.port = "";
   }
   const oldUrlString = urlString;
   urlString = urlObject.toString();

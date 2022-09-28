@@ -13,10 +13,10 @@ export interface Options {
 
 	@example
 	```
-	normalizeUrl('//sindresorhus.com:80/');
+	normalizeUrl('//sindresorhus.com');
 	//=> 'http://sindresorhus.com'
 
-	normalizeUrl('//sindresorhus.com:80/', {normalizeProtocol: false});
+	normalizeUrl('//sindresorhus.com', {normalizeProtocol: false});
 	//=> '//sindresorhus.com'
 	```
 	*/
@@ -29,10 +29,10 @@ export interface Options {
 
 	@example
 	```
-	normalizeUrl('https://sindresorhus.com:80/');
+	normalizeUrl('https://sindresorhus.com');
 	//=> 'https://sindresorhus.com'
 
-	normalizeUrl('https://sindresorhus.com:80/', {forceHttp: true});
+	normalizeUrl('https://sindresorhus.com', {forceHttp: true});
 	//=> 'http://sindresorhus.com'
 	```
 	*/
@@ -47,10 +47,10 @@ export interface Options {
 
 	@example
 	```
-	normalizeUrl('https://sindresorhus.com:80/');
-	//=> 'https://sindresorhus.com'
+	normalizeUrl('http://sindresorhus.com');
+	//=> 'http://sindresorhus.com'
 
-	normalizeUrl('http://sindresorhus.com:80/', {forceHttps: true});
+	normalizeUrl('http://sindresorhus.com', {forceHttps: true});
 	//=> 'https://sindresorhus.com'
 	```
 	*/
@@ -248,6 +248,23 @@ export interface Options {
 	```
 	*/
 	readonly removeDirectoryIndex?: boolean | ReadonlyArray<RegExp | string>;
+
+	/**
+	Removes an explicit port number from the URL.
+
+	Port 443 is always removed from HTTPS URLs and 80 is always removed from HTTP URLs regardless of this option.
+
+	@default false
+
+	@example
+	```
+	normalizeUrl('sindresorhus.com:123', {
+		removeExplicitPort: true
+	});
+	//=> 'http://sindresorhus.com'
+	```
+	*/
+	readonly removeExplicitPort?: boolean;
 
 	/**
 	Sorts the query parameters alphabetically by key.

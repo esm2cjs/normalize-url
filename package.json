@@ -1,6 +1,6 @@
 {
 	"name": "@esm2cjs/normalize-url",
-	"version": "7.1.0",
+	"version": "7.2.0",
 	"description": "Normalize a URL. This is a fork of sindresorhus/normalize-url, but with CommonJS support.",
 	"license": "MIT",
 	"repository": "esm2cjs/normalize-url",
