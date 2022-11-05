@@ -23,7 +23,21 @@ module.exports = __toCommonJS(esm_exports);
 const DATA_URL_DEFAULT_MIME_TYPE = "text/plain";
 const DATA_URL_DEFAULT_CHARSET = "us-ascii";
 const testParameter = (name, filters) => filters.some((filter) => filter instanceof RegExp ? filter.test(name) : filter === name);
+const supportedProtocols = /* @__PURE__ */ new Set([
+  "https:",
+  "http:",
+  "file:"
+]);
+const hasCustomProtocol = (urlString) => {
+  try {
+    const { protocol } = new URL(urlString);
+    return protocol.endsWith(":") && !supportedProtocols.has(protocol);
+  } catch {
+    return false;
+  }
+};
 const normalizeDataURL = (urlString, { stripHash }) => {
+  var _a, _b;
   const match = /^data:(?<type>[^,]*?),(?<data>[^#]*?)(?:#(?<hash>.*))?$/.exec(urlString);
   if (!match) {
     throw new Error(`Invalid URL: ${urlString}`);
@@ -36,7 +50,7 @@ const normalizeDataURL = (urlString, { stripHash }) => {
     mediaType.pop();
     isBase64 = true;
   }
-  const mimeType = (mediaType.shift() || "").toLowerCase();
+  const mimeType = (_b = (_a = mediaType.shift()) == null ? void 0 : _a.toLowerCase()) != null ? _b : "";
   const attributes = mediaType.map((attribute) => {
     let [key, value = ""] = attribute.split("=").map((string) => string.trim());
     if (key === "charset") {
@@ -60,7 +74,7 @@ const normalizeDataURL = (urlString, { stripHash }) => {
 };
 function normalizeUrl(urlString, options) {
   options = {
-    defaultProtocol: "http:",
+    defaultProtocol: "http",
     normalizeProtocol: true,
     forceHttp: false,
     forceHttps: false,
@@ -76,12 +90,15 @@ function normalizeUrl(urlString, options) {
     sortQueryParameters: true,
     ...options
   };
+  if (typeof options.defaultProtocol === "string" && !options.defaultProtocol.endsWith(":")) {
+    options.defaultProtocol = `${options.defaultProtocol}:`;
+  }
   urlString = urlString.trim();
   if (/^data:/i.test(urlString)) {
     return normalizeDataURL(urlString, options);
   }
-  if (/^view-source:/i.test(urlString)) {
-    throw new Error("`view-source:` is not supported as it is a non-standard protocol");
+  if (hasCustomProtocol(urlString)) {
+    return urlString;
   }
   const hasRelativeProtocol = urlString.startsWith("//");
   const isRelativeUrl = !hasRelativeProtocol && /^\.*\//.test(urlString);
